@@ -1,0 +1,1205 @@
+/* $colors:(primary:#005dff,
+  // primary:#007bff,
+  // #1e45d0
+  primary-light :lighten(#005dff, 40%),
+  primary-dark :darken(#005dff, 40%),
+  accent :#fff6bb,
+  white:#f4f4f4,
+  black:#333,
+
+);
+$spacer :1rem;
+$borders:1rem;
+$background: transparent;
+$box-shadow: 0 0 10px #000;
+$fs:1rem;
+$fw:300;
+
+@function color($color-name) {
+  @return map-get($colors, $color-name)
+}
+
+
+@mixin mq($size) {
+  @media (min-width:$size) {
+    @content;
+  }
+}
+
+@mixin container {
+  .container {
+    width: 96%;
+    margin: auto;
+
+    @include mq(780px) {
+      width: 92%;
+
+    }
+
+    @include mq(922px) {
+      width: 88%;
+
+    }
+
+    @include mq(1024px) {
+      width: 70%;
+
+    }
+
+  }
+
+
+} */
+
+
+
+
+html,
+body {
+  background: #eee;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* 
+.wrapper {
+    width: 90%;
+    position: relative;
+    margin: 5% auto 0;
+} */
+
+/**
+ * Padding is set relative to the width
+ * of the element, so here padding-top:60% is
+ * a percentage of the width. This allows us 
+ * to set the height as a ratio of the width
+ *
+ */
+.carousel {
+  width: 100%;
+  position: relative;
+  padding-top: 60%;
+  overflow: hidden;
+}
+
+.inner {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/**
+ * ==========================
+ * Animation styles
+ * 
+ * Notes:
+ * 1. We use z-index to position active slides in-front 
+ * of non-active slides
+ * 2. We set right:0 and left:0 on .slide to provide us with
+ * a default positioning on both sides of the slide. This allows 
+ * us to trigger JS and CSS3 animations easily
+ *
+ */
+.slide {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  opacity: 0;
+}
+
+.slide.active,
+.slide.left,
+.slide.right {
+  z-index: 2;
+  opacity: 1;
+}
+
+/**
+ * ==========================
+ * JS animation styles
+ * 
+ * We use jQuery.animate to control the sliding animations
+ * when CSS3 animations are not available. In order for
+ * the next slide to slide in from the right, we need
+ * to change the left:0 property of the slide to left:auto
+ *
+ */
+
+.js-reset-left {
+  left: auto
+}
+
+/**
+ * ==========================
+ * CSS animation styles
+ * 
+ * .slide.left and .slide.right set-up
+ * the to-be-animated slide so that it can slide
+ * into view. For example, a slide that is about 
+ * to slide in from the right will:
+ * 1. Be positioned to the right of the viewport (right:-100%)
+ * 2. Slide in when the style is superseded with a more specific style (right:0%)
+ *
+ */
+.slide.left {
+  left: -100%;
+  right: 0;
+}
+
+.slide.right {
+  right: -100%;
+  left: auto;
+}
+
+.transition .slide.left {
+  left: 0%
+}
+
+.transition .slide.right {
+  right: 0%
+}
+
+/**
+ * The following classes slide the previously active
+ * slide out of view before positioning behind the 
+ * currently active slide
+ *
+ */
+.transition .slide.shift-right {
+  right: 100%;
+  left: auto
+}
+
+.transition .slide.shift-left {
+  left: 100%;
+  right: auto
+}
+
+/**
+ * This sets the CSS properties that will animate. We set the
+ * transition-duration property dynamically via JS.
+ * We use the browser's default transition-timing-function
+ * for simplicity's sake
+ * 
+ * It is important to note that we are using CodePen's inbuilt
+ * CSS3 property prefixer. For your own projects, you will need
+ * to prefix the transition and transform properties here to ensure
+ * reliable support across browsers
+ *
+ */
+.transition .slide {
+  transition-property: right, left, margin;
+}
+
+/**
+ * ==========================
+ * Indicators
+ *
+ */
+.indicators {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  z-index: 4;
+  padding: 0;
+  text-align: center;
+}
+
+.indicators li {
+  width: 13px;
+  height: 13px;
+  display: inline-block;
+  margin: 5px;
+  background: #fff;
+  list-style-type: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s ease-out;
+}
+
+.indicators li.active {
+  background: #93278f
+}
+
+.indicators li:hover {
+  background-color: #2b2b2b
+}
+
+/**
+ * ==========================
+ * Arrows 
+ *
+ */
+.arrow {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 50%;
+  z-index: 5;
+  border-top: 3px solid #fff;
+  border-right: 3px solid #fff;
+  cursor: pointer;
+  transition: border-color 0.3s ease-out;
+}
+
+.arrow:hover {
+  border-color: #93278f
+}
+
+.arrow-left {
+  left: 20px;
+  transform: rotate(225deg);
+}
+
+.arrow-right {
+  right: 20px;
+  transform: rotate(45deg);
+}
+
+/**
+ * ==========================
+ * For demo purposes only
+ * 
+ * Please note that the styles below are used
+ * for the purposes of this demo only. There is no need
+ * to use these in any of your own projects
+ *
+ */
+.slide {
+  text-align: center;
+  padding-top: 25%;
+  background-size: cover;
+}
+
+/* h1 {
+  width: 100px;
+  height: 100px;
+  background-color: rgba(146, 45, 141, 0.7);
+  margin: auto;
+  line-height: 100px;
+  color: #fff;
+  font-size: 2.4em;
+  border-radius: 50%;
+} */
+
+.slide:nth-child(1) {
+  background-image: url(../img/bg1.jpg);
+  background-size: cover;
+  object-fit: cover;
+  background-position: center;
+}
+
+.slide:nth-child(2) {
+ background-image: url(../img/bg2.jpg);
+ background-size: cover;
+ object-fit: cover;
+ background-position: center;
+ }
+
+.slide:nth-child(3) {
+ background-image: url(../img/bg3.jpg);
+ background-size: cover;
+ object-fit: cover;
+ background-position: center;
+ }
+
+/* 
+
+after carsoul
+
+
+*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: background 250ms ease-in-out;
+  letter-spacing: 1px;
+}
+
+body {
+  font: 16px Arial, Helvetica, sand-serif;
+  color: #333;
+  overflow-x: hidden;
+}
+
+/*
+buttons
+===========================
+*/
+
+
+.button {
+  text-decoration: none;
+  text-transform: uppercase;
+  padding: 3px 20px;
+  border-width: 2px;
+  border-style: solid;
+  display: inline-block;
+  transition: all .5s ease-in-out;
+  border-radius: 50px;
+  font-weight: 400;
+  line-height: 1.3;
+  box-shadow: 0 0 15px #333;
+
+
+}
+
+
+.button-accent {
+  color: #f4f4f4;
+  border-color: #f4f4f4;
+  font-size: 1.5em;
+
+}
+
+.home-book {
+  left: 50%;
+  top: 90%;
+  transform: translate(-50%, -90%);
+  position: absolute;
+}
+
+@media (min-width:660px) {
+  .home-book {
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 5px 55px;
+
+  }
+}
+
+@media (min-width:1024px) {
+  .home-book {
+    top: 40%;
+    transform: translate(-50%, -40%);
+    padding: 5px 55px;
+
+  }
+}
+
+
+
+.button-accent:hover,
+.button-accent:focus {
+  background-color: #f4f4f4;
+  color: #232323;
+}
+
+
+.button-small {
+  font-size: .8em;
+  font-weight: 700;
+}
+
+.button-darken {
+  color: #4698D9;
+  border-color: #333;
+  background-color: #333;
+
+}
+
+.button-darken:hover,
+.button-darken:focus {
+  background-color: #4698D9;
+  border-color: #4698D9;
+  color: #232323;
+
+}
+
+img {
+  max-height: 100%;
+}
+
+
+
+
+
+/* Nav
+========================================================= */
+
+
+header {
+
+  /* min-height: 8vh; */
+  width: 100%;
+  --text: #f4f4f4;
+  --text-inverse: #333;
+  --background: transparent;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+  padding: .5em 1.5em;
+  transition: background 250ms ease-in;
+  background: var(--background);
+  color: var(--text);
+
+}
+
+header a:hover {
+  color: yellow;
+}
+
+.scroll .dropdown-menu {
+  background: transparent;
+}
+
+.site-logo {
+  font-weight: 900;
+  font-size: 25px;
+  text-decoration: none;
+  text-transform: uppercase;
+  flex-grow: 1;
+  color: #f7f7f7;
+
+}
+
+.site-logo:hover {
+  color: #f7f7f7;
+
+}
+
+header.hide {
+  transform: translateY(-100%);
+}
+
+.nav-list {
+
+  display: flex;
+  justify-content: space-around;
+  list-style-type: none;
+  align-items: center;
+  margin: 0;
+  padding: 1rem 0;
+}
+
+.main-nav {
+  flex-grow: 3;
+}
+
+.account {
+  flex-grow: 1;
+}
+
+.account ul {
+
+  justify-content: flex-end;
+
+}
+
+
+
+.nav-link {
+  font-weight: bold;
+  --spacing: 1em;
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+  padding: calc(var(--spacing) / 2) var(--spacing);
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.9rem
+}
+
+@media(max-width:980px) {
+  .nav-link {
+
+    padding: 0 var(--spacing);
+  }
+
+}
+
+.nav-link:after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: var(--spacing);
+  right: var(--spacing);
+  height: 2px;
+  background: currentColor;
+  -webkit-transform: scaleX(0);
+  transform: scaleX(0);
+  transition: -webkit-transform 250ms ease-in-out;
+  transition: transform 250ms ease-in-out;
+  transition: transform 250ms ease-in-out, -webkit-transform 250ms ease-in-out;
+}
+
+.nav-link:hover::after {
+  -webkit-transform: scaleX(1);
+  transform: scaleX(1);
+}
+
+.nav-link--btn {
+  border: 1.5px solid currentColor;
+  border-radius: 2em;
+  margin-left: 1em;
+  transition: background 250ms ease-in-out;
+  letter-spacing: 1px;
+  padding: 0.75em 1.5em;
+}
+
+.nav-link--btn:hover {
+  background: var(--text);
+  color: var(--text-inverse);
+  border-color: var(--text);
+}
+
+.nav-link--btn::after {
+  display: none;
+}
+
+.nav-link--btn--highlight {
+  background: rgb(255, 255, 0);
+  border-color: rgb(255, 255, 0);
+  color: #333;
+}
+
+
+@media(min-width:840px) {
+  .nav-link--btn--highlight {
+    background: transparent;
+    border-color: rgb(0, 255, 64);
+    color: white;
+  }
+}
+
+.nav-link--btn--highlight:hover {
+  background: var(--text);
+  border-color: var(--text);
+}
+
+.nav-scrolled {
+  --text: #333;
+  --text-inverse: #f4f4f4;
+  --background: #f4f4f4;
+  box-shadow: 0 3px 20px rgba(0, 0, 0, 0.2);
+
+}
+
+.nav-scrolled .site-logo {
+  color: #4698D9;
+}
+
+.nav-scrolled .site-logo:hover {
+  color: #4698D9;
+}
+
+.nav-scrolled .nav-link--btn--highlight {
+  color: #000;
+  border-color: #000;
+}
+
+.nav-scrolled .nav-link--btn--highlight:hover {
+  color: #fff
+}
+
+/* .nav-scrolled a:hover {
+  color: rgb(18, 73, 194);
+} */
+
+@media (max-width:779px) {
+
+  .nav-scrolled a:hover {
+    color: yellow;
+  }
+}
+
+.burger {
+  display: none;
+  width: 38px;
+  cursor: pointer;
+
+}
+
+.burger div {
+  height: 3px;
+  width: 100%;
+  background-color: #f4f4f4;
+  margin: 7px 0;
+  transition: all .5s ease-in-out;
+  box-shadow: 0 0 10px #000
+}
+
+@media(max-width:980px) {
+  header {
+    padding: 0 3em;
+    /* background-color: #5d4954; */
+
+
+  }
+
+  .nav-list {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    background-color: #4698D9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40%;
+    transform: translateX(100%);
+    padding: 1rem 0 10rem 0;
+
+  }
+
+  .nav-list-item {
+    opacity: 0;
+  }
+
+  .nav-link {
+    color: #333;
+  }
+
+  .burger {
+    display: block;
+
+  }
+}
+
+
+@media(max-width:500px) {
+
+  .nav-list {
+    width: 50%;
+  }
+}
+
+
+
+.nav-active {
+  transform: translateX(0);
+}
+
+@keyframes navLinkFade {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0px);
+
+  }
+}
+
+
+.toggle div:first-child {
+  transform: rotate(-407deg) translate(-5px, 9px);
+}
+
+.toggle div:nth-child(2) {
+  opacity: 0;
+}
+
+.toggle div:last-child {
+  transform: rotate(407deg) translate(-5px, -9px);
+
+}
+
+/* Particles-js
+========================================================= */
+#particles-js {
+  /* min-height: 500px; */
+  position: relative;
+
+}
+
+/* home-hero
+========================================================= */
+#home {
+  position: absolute;
+  /* padding-top: 25vh; */
+  /* background-color: rgba(0, 0, 0, 0.2); */
+
+}
+
+.carousel-item img {
+  min-height: 70vh;
+}
+
+.home-text {
+  line-height: 50px;
+  letter-spacing: 1px;
+  position: absolute;
+  top: 64%;
+  left: 50%;
+  width: 100%;
+  transform: translate(-50%, -64%);
+}
+
+.hero-text {
+  font-weight: 800;
+  font-size: 1.8em;
+  /* color: transparent ; */
+  color: #f4f4f4;
+
+  /* position: relative; */
+
+
+}
+
+@media(min-width:760px) {
+
+  .hero-text {
+    font-size: 2.5em;
+
+  }
+}
+
+/* .hero-text::before{
+  content:attr(data-text);
+  position: absolute;
+  top:0;
+  left:0;
+  width:100%;
+  color:#f4f4f4;
+  overflow: hidden;
+  border-right: 2px solid #000;
+  animation: type 10s steps(25) infinite;
+  white-space: nowrap;
+
+}
+@keyframes type {
+  0%{
+    width: 0%;
+  }
+  50%{
+    width:100%;
+  }
+  100%{
+    width: 0%;
+  }
+
+}
+
+.hero-text span{
+  /* display: block; */
+
+}
+
+
+
+
+
+/*  HOW TO E7GZLY
+======================================================= */
+.how {
+  background: #222;
+  color: white;
+}
+
+/*  MY Tickets 
+======================================================= */
+.ticket {
+  background: linear-gradient(to right, #d97346, #4698D9);
+  position: relative;
+}
+
+.ticket-text {
+  display: grid;
+  place-items: center;
+  color: #f4f4f4;
+  padding: 3em 1em;
+}
+
+@media (min-width: 1024px) {
+  .features {
+    padding: 20vh 0;
+  }
+}
+
+.pricing {
+  padding: 10vh 0;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .pricing {
+    padding: 20vh 0;
+  }
+}
+
+.featured-price {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+  z-index: 10;
+  background: #222;
+}
+
+/* serve section 
+================================*/
+
+.serve {
+  font-size: 30px;
+}
+
+/* partner section 
+================================*/
+
+/* .partner-box{
+  flex-basis:22%;
+  display: flex;
+  justify-content: center;
+} */
+.partner-container img {
+  width: 40%;
+  padding: 1rem;
+}
+
+@media(min-width:1024px) {
+  .partner-container img {
+    width: 20%;
+    padding: 1rem;
+    height: 40%;
+  }
+}
+
+
+
+/* Contact form
+================================*/
+.myForm {
+  background-color: #232323;
+}
+
+/* =================================== */
+/*  Footer Styles
+/* =================================== */
+/*-------- start footer Area -------------*/
+
+.footer-area {
+  background-color: #333;
+  padding: 65px 0px;
+}
+
+.footer-area p,
+.footer-area span {
+  color: #989b9e;
+}
+
+.is:hover {
+  color: #4698D9;
+}
+
+.btnsend {
+  width: 29%;
+  height: 40px;
+  background-color: #4698D9;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  position: relative;
+  right: -178px;
+  top: 10px;
+}
+
+.btnsend:hover {
+  background-color: #09518a;
+  font-size: 20px;
+
+}
+
+.footer-area h6 {
+  color: white;
+  margin-bottom: 25px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+
+.footer-social a {
+  -webkit-transition: all 0.3s ease 0s;
+  -moz-transition: all 0.3s ease 0s;
+  -o-transition: all 0.3s ease 0s;
+  transition: all 0.3s ease 0s;
+}
+
+.footer-social a:hover {
+
+  color: #f9d700;
+}
+
+single-footer-widget .span {
+  color: #f9d700;
+}
+
+single-footer-widget .span:hover {
+  color: white;
+}
+
+.footer-social i {
+  color: #cccccc;
+}
+
+/* -webkit-transition: all 0.3s ease 0s;
+  -moz-transition: all 0.3s ease 0s;
+  -o-transition: all 0.3s ease 0s;
+  transition: all 0.3s ease 0s;
+}*/
+.footer-social i:hover {
+  color: #4698D9;
+  /* font-size:25px; */
+}
+
+@media (max-width: 991.98px) {
+  .footer-social {
+    text-align: left;
+  }
+}
+
+.single-footer-widget input {
+  border: none;
+  width: 80% !important;
+  font-weight: 300;
+  background: #f9f9ff;
+  color: #eee;
+  padding-left: 20px;
+  border-radius: 0;
+  font-size: 14px;
+  padding: 9.5px;
+  border-radius: 5px;
+}
+
+.single-footer-widget input:focus {
+  background-color: #f4f4f4;
+}
+
+.single-footer-widget ul li {
+  margin-bottom: 10px;
+}
+
+.single-footer-widget ul li a {
+  color: #777777;
+  -webkit-transition: all 0.3s ease 0s;
+  -moz-transition: all 0.3s ease 0s;
+  -o-transition: all 0.3s ease 0s;
+  transition: all 0.3s ease 0s;
+}
+
+.single-footer-widget ul li a:hover {
+  color: #f9d700;
+}
+
+.single-footer-widget .bb-btn {
+  color: #f9d700;
+  color: #f4f4f4;
+  font-weight: 300;
+  border-radius: 0;
+  z-index: 9999;
+  cursor: pointer;
+}
+
+.single-footer-widget .info {
+  position: absolute;
+  margin-top: 20%;
+  color: #f4f4f4;
+  font-size: 12px;
+}
+
+.single-footer-widget .info.valid {
+  color: green;
+}
+
+.single-footer-widget .info.error {
+  color: red;
+}
+
+.single-footer-widget .click-btn {
+  background-color: #f9d700;
+  color: #333;
+  border-radius: 0;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  padding: 8px 12px;
+  border: 0;
+}
+
+.single-footer-widget .click-btn span {
+  font-weight: 500;
+}
+
+.single-footer-widget ::-moz-selection {
+  /* Code for Firefox */
+  background-color: #191919 !important;
+  color: #777777;
+}
+
+.single-footer-widget ::selection {
+  background-color: #191919 !important;
+  color: #777777;
+}
+
+.single-footer-widget ::-webkit-input-placeholder {
+  /* WebKit, Blink, Edge */
+  color: #777777;
+  font-weight: 300;
+}
+
+.single-footer-widget :-moz-placeholder {
+  /* Mozilla Firefox 4 to 18 */
+  color: #777777;
+  opacity: 1;
+  font-weight: 300;
+}
+
+.single-footer-widget ::-moz-placeholder {
+  /* Mozilla Firefox 19+ */
+  color: #777777;
+  opacity: 1;
+  font-weight: 300;
+}
+
+.single-footer-widget :-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
+  color: #777777;
+  font-weight: 300;
+}
+
+.single-footer-widget ::-ms-input-placeholder {
+  /* Microsoft Edge */
+  color: #777777;
+  font-weight: 300;
+}
+
+@media (max-width: 991.98px) {
+  .single-footer-widget {
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 800px) {
+  .social-widget {
+    margin-top: 30px;
+  }
+}
+
+.footer-text {
+  text-align: center;
+  margin-bottom: 0px;
+}
+
+.footer-text a,
+.footer-text i {
+  color: #4698D9;
+}
+
+.footer-bottom {
+  position: absolute;
+  bottom: 0px;
+  width: 100
+}
+
+
+/*-------- end footer Area -------------*/
+
+a,
+a:hover {
+  text-decoration: none;
+
+}
+
+/* @media(min-width:920px){
+    .container{
+        width: 70%;
+    }
+    } */
+.fixed-height {
+  height: 50px;
+}
+
+
+.media-body {
+  line-height: 1.5;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+}
+
+.services {
+  display: block;
+  width: 100%;
+  position: relative;
+  background: #f0f9fd;
+  padding: 20px 30px;
+  margin-bottom: 30px;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+  -ms-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+.services:after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  content: '';
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 50px 50px 0;
+  border-color: transparent #fff transparent transparent;
+}
+
+.services .icon {
+  line-height: 1.3;
+  position: relative;
+  margin: 0 auto;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  border-radius: 50%;
+}
+
+.services .icon span {
+  font-size: 50px;
+  color: #1b9ce3;
+}
+
+@media (max-width: 767.98px) {
+  .services .media-body {
+    padding-bottom: 3.5em !important;
+  }
+}
+
+.services .media-body h3 {
+  font-weight: 700;
+  font-size: 20px;
+  color: #233e62;
+}
+
+.services.active,
+.services:hover {
+  background: #1b9ce3;
+}
+
+.services.active .icon span,
+.services:hover .icon span {
+  color: #fff;
+}
+
+.services.active .media-body,
+.services:hover .media-body {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.services.active .media-body h3,
+.services:hover .media-body h3 {
+  color: #fff;
+}
