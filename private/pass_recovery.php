@@ -39,10 +39,10 @@ switch ($_GET['do']) {
                 $mail->SMTPAuth = true;
                 $mail->IsHTML(true);
 
-                $mail->Username = "webdevtest25@gmail.com";
-                $mail->Password = "Ahmed@naser1";
+                $mail->Username = "xxxxxxxxxxxxxxxxxxxxx";
+                $mail->Password = "xxxxxxxxxxxxxxxxxxxxxx";
 
-                $mail->setFrom('webdevtest25@gmail.com', 'E7GZLY');
+                $mail->setFrom('xxxxxxxxxxxxxxx', 'E7GZLY');
                 $mail->addAddress($email, $name);
 
                 $mail->Subject = 'Password Recovery Code from E7GZLY';
@@ -57,12 +57,12 @@ switch ($_GET['do']) {
             } else if ($_POST['type'] == "phone") {
 
                 // Your Account SID and Auth Token from twilio.com/console
-                $account_sid = 'AC320b843b6acfa154f5bafdf38ad09add';
-                $auth_token = 'a6710d696e89ae777939177a9c28f1c2';
+                $account_sid = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+                $auth_token = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
                 // In production, these should be environment variables. E.g.:
 
                 // A Twilio number you own with SMS capabilities
-                $twilio_number = "+19802553977";
+                $twilio_number = "+xxxxxxxxxxxxxxxxxxxxxx";
 
                 $client = new Client($account_sid, $auth_token);
                 $client->messages->create(
